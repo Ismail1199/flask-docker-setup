@@ -9,14 +9,14 @@ pipeline{
      }
      stage('Build Docker Image'){
         steps{
-            sh 'docker build -t flask-demo .'
+            sh '/usr/local/bin/docker build -t flask-demo .'
         }
      }
      stage('Deploy Container'){
         steps{
            sh '''
-           docker rm -f flask-demo || true
-           docker run -d \
+           /usr/local/bin/docker rm -f flask-demo || true
+           /usr/local/bin/docker run -d \
            --name flask-demo \
            -p 5001:5000 \
            flas-demo
