@@ -30,17 +30,15 @@ pipeline {
             }
         }
 
-        stage('Deploy Container') {
-            steps {
-                sh '''
-                docker rm -f flask-demo || true
-
-                docker run -d \
-                  --name flask-demo \
-                  -p 5001:5000 \
-                  flask-demo
-                '''
-            }
+        stage('Deploy to Kubernetes') {
+    steps {
+        sh '''
+        kubectl apply -f deployment.yaml
+        kubectl apply -f service.yaml
+        kubectl rollout restart deployment flask-demo
+        '''
+    }
+}
         }
     }
 }
