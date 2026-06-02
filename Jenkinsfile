@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        PATH = "/usr/local/bin:/Applications/Docker.app/Contents/Resources/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+    }
+
     stages {
 
         stage('Checkout') {
@@ -9,18 +13,29 @@ pipeline {
             }
         }
 
+        stage('Debug') {
+            steps {
+                sh '''
+                echo "PATH=$PATH"
+                which docker
+                which docker-credential-desktop
+                docker --version
+                '''
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
-                sh '/usr/local/bin/docker build -t flask-demo .'
+                sh 'docker build -t flask-demo .'
             }
         }
 
         stage('Deploy Container') {
             steps {
                 sh '''
-                /usr/local/bin/docker rm -f flask-demo || true
+                docker rm -f flask-demo || true
 
-                /usr/local/bin/docker run -d \
+                docker run -d \
                   --name flask-demo \
                   -p 5001:5000 \
                   flask-demo
